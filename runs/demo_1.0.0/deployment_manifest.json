@@ -1,0 +1,14 @@
+{
+  "runtime_id": "OUR-EA",
+  "runtime_version": "1.0.0",
+  "strategy_id": "SNIPER-V168",
+  "spec_version": "1.0.0",
+  "strategy_spec_hash": "4648DFBB8AD54B8274EB5F81C87EA47F5AEE18DF7F90DAB1A90099B6F0E7C89E",
+  "evidence_model_hash": "124F08984284E880F268C37E6A4583A8653B5EB1B80EB5C45BBB64F58AC3D4AE",
+  "build_contract_version": "1.0.0",
+  "mode": "PAPER",
+  "live_locked": true,
+  "gateway_contract": "1.0.0",
+  "created_at": "2026-09-25T12:14:46.848+00:00",
+  "deployment_hash": "CF3889FDBE660D04EED043AB6B11DF96C4DB65E7120577C754FD59E702814EEE"
+}

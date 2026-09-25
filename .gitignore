@@ -1,0 +1,22 @@
+# Python caches
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Secrets / credentials — never commit (RULE: secrets out of source code)
+.env
+.env.*
+*.secret
+*.key
+credentials*
+
+# Local environment
+.venv/
+venv/
+*.pid
+
+# Runtime-generated outputs (sealed provenance manifests stay tracked)
+runs/**/audit.jsonl
+runs/**/events.jsonl
+runs/**/runtime_state.json
+runs/**/summary.json
