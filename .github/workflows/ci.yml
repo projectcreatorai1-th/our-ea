@@ -1,0 +1,39 @@
+name: CI
+
+# OUR-EA — stdlib unittest suite. The suite itself performs the Strategy
+# Spec three-way verification, evidence/spec/contract hash pinning, LIVE
+# lock, contract fail-closed and forbidden-analyzer-import checks.
+#
+# The analyzer is resolved at a PINNED TAG (never latest):
+#   SNIPER_ANALYZER_ROOT -> checkout of sniper-web @ SPEC_TAG
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  SPEC_TAG: spec/1.0.0
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Checkout pinned SNIPER analyzer
+        uses: actions/checkout@v4
+        with:
+          repository: projectcreatorai1-th/sniper-web
+          ref: ${{ env.SPEC_TAG }}
+          path: sniper-analyzer
+      - name: Full test suite against pinned spec
+        env:
+          SNIPER_ANALYZER_ROOT: ${{ github.workspace }}/sniper-analyzer
+        run: |
+          python -c "from our_ea.spec.repository import load_repository; \
+r = load_repository().verify(); print('verified:', r)"
+          python run_tests.py
