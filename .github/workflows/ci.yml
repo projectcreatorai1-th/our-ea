@@ -6,6 +6,8 @@ name: CI
 #
 # The analyzer is resolved at a PINNED TAG (never latest):
 #   SNIPER_ANALYZER_ROOT -> checkout of sniper-web @ SPEC_TAG
+# sniper-web may be private; in that case add repo secret SNIPER_READ_PAT
+# (classic PAT, repo:read). If it is public the default token is enough.
 on:
   push:
     branches: [main]
@@ -30,10 +32,27 @@ jobs:
           repository: projectcreatorai1-th/sniper-web
           ref: ${{ env.SPEC_TAG }}
           path: sniper-analyzer
+          token: ${{ secrets.SNIPER_READ_PAT || github.token }}
+      - name: Normalize pinned analyzer artifacts to canonical CRLF bytes
+        # The frozen evidence model is hash-pinned over CRLF bytes (see
+        # sniper-web .gitattributes). The immutable spec/1.0.0 tag predates
+        # that attributes file, so normalize the checkout to the canonical
+        # bytes before any raw-sha256 verification runs.
+        run: |
+          python - <<'PY'
+          import glob
+          for pat in ("sniper-analyzer/data/evidence_model/*.json",
+                      "sniper-analyzer/data/our_ea/*.json"):
+              for p in glob.glob(pat):
+                  b = open(p, "rb").read()
+                  n = b.replace(b"\r\n", b"\n").replace(b"\n", b"\r\n")
+                  if n != b:
+                      open(p, "wb").write(n)
+                      print("normalized", p)
+          PY
       - name: Full test suite against pinned spec
         env:
           SNIPER_ANALYZER_ROOT: ${{ github.workspace }}/sniper-analyzer
         run: |
-          python -c "from our_ea.spec.repository import load_repository; \
-r = load_repository().verify(); print('verified:', r)"
+          python -c "from our_ea.spec.repository import load_repository; r = load_repository().verify(); print('verified:', r)"
           python run_tests.py

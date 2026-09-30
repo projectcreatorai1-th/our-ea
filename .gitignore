@@ -20,3 +20,6 @@ runs/**/audit.jsonl
 runs/**/events.jsonl
 runs/**/runtime_state.json
 runs/**/summary.json
+
+# local security-scanner state
+.mimosa/
